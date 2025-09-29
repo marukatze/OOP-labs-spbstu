@@ -8,6 +8,7 @@ public class AbstractProgram implements Runnable {
     }
 
     public synchronized void setState(ProgramState newState) {
+        if (this.state == newState) return; // no need to notify if current state and newState are the same
         this.state = newState;
         System.out.println("Состояние программы -> " + newState);
         notifyAll();
