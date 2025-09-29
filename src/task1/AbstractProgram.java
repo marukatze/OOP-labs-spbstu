@@ -1,6 +1,6 @@
 package task1;
 
-class AbstractProgram implements Runnable {
+public class AbstractProgram implements Runnable {
     private ProgramState state = ProgramState.UNKNOWN;
 
     public synchronized ProgramState getState() {
