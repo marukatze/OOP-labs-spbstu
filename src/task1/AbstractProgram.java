@@ -14,4 +14,25 @@ public class AbstractProgram {
         System.out.println("Состояние программы -> " + newState);
         notifyAll();
     }
+
+    public synchronized void startProgram() {
+        if (workerThread != null && workerThread.isAlive()) {
+            setState(ProgramState.RUNNING);
+            return;
+        }
+
+        workerThread = new Thread(this::workerRun);
+        setState(ProgramState.RUNNING);
+        workerThread.start();
+    }
+
+    private void workerRun() {
+        while(true) {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
 }
