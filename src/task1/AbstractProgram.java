@@ -1,7 +1,8 @@
 package task1;
 
-public class AbstractProgram implements Runnable {
+public class AbstractProgram {
     private ProgramState state = ProgramState.UNKNOWN;
+    private Thread workerThread;
 
     public synchronized ProgramState getState() {
         return state;
@@ -12,10 +13,5 @@ public class AbstractProgram implements Runnable {
         this.state = newState;
         System.out.println("Состояние программы -> " + newState);
         notifyAll();
-    }
-
-    @Override
-    public void run() {
-        // in process
     }
 }
