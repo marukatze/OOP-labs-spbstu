@@ -51,8 +51,11 @@ public abstract class AbstractProgram {
     }
 
     private void workLoop() {
-        while (!shouldStop) doWork();
-        cleanup();
+        try {
+            while (!shouldStop) doWork();
+        } finally {
+            cleanup();
+        }
     }
 
     public abstract void doWork();
