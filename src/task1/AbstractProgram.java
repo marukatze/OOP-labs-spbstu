@@ -1,12 +1,8 @@
 package task1;
 
-public class AbstractProgram {
+public abstract class AbstractProgram {
     private volatile ProgramState state = ProgramState.UNKNOWN;
-    private Thread workerThread;
-
-    public AbstractProgram(Thread workerThread) {
-        this.workerThread = workerThread;
-    }
+    private Thread workerThread = new Thread(this::doWork);
 
     public synchronized ProgramState getState() {
         return state;
@@ -56,4 +52,6 @@ public class AbstractProgram {
         }
         workerThread = null;
     }
+
+    public abstract void doWork();
 }
