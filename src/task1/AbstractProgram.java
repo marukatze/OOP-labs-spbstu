@@ -4,6 +4,10 @@ public class AbstractProgram {
     private volatile ProgramState state = ProgramState.UNKNOWN;
     private Thread workerThread;
 
+    public AbstractProgram(Thread workerThread) {
+        this.workerThread = workerThread;
+    }
+
     public synchronized ProgramState getState() {
         return state;
     }
@@ -22,19 +26,8 @@ public class AbstractProgram {
             return;
         }
 
-        workerThread = new Thread(this::workerRun);
         setState(ProgramState.RUNNING);
         workerThread.start();
-    }
-
-    private void workerRun() {
-        while(true) {
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
     }
 
     public synchronized void stopProgram() {
