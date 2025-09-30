@@ -38,13 +38,18 @@ public class AbstractProgram {
     }
 
     public synchronized void stopProgram() {
-        if (workerThread == null || workerThread.isInterrupted()) {
+        if (workerThread == null || !workerThread.isAlive()) {
             setState(ProgramState.STOPPING);
             return;
         }
 
-        workerThread = null;
         setState(ProgramState.STOPPING);
         workerThread.interrupt();
+        try {
+            workerThread.join(1000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        workerThread = null;
     }
 }
