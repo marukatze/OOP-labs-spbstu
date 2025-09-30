@@ -1,7 +1,7 @@
 package task1;
 
 public class AbstractProgram {
-    private ProgramState state = ProgramState.UNKNOWN;
+    private volatile ProgramState state = ProgramState.UNKNOWN;
     private Thread workerThread;
 
     public synchronized ProgramState getState() {
