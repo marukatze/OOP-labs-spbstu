@@ -52,4 +52,15 @@ public class AbstractProgram {
         }
         workerThread = null;
     }
+
+    public synchronized void killProgram() {
+        setState(ProgramState.FATAL_ERROR);
+        workerThread.interrupt();
+        try {
+            workerThread.join(1000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        workerThread = null;
+    }
 }
