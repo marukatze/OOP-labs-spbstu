@@ -36,4 +36,15 @@ public class AbstractProgram {
             }
         }
     }
+
+    public synchronized void stopProgram() {
+        if (workerThread == null || workerThread.isInterrupted()) {
+            setState(ProgramState.STOPPING);
+            return;
+        }
+
+        workerThread = null;
+        setState(ProgramState.STOPPING);
+        workerThread.interrupt();
+    }
 }
