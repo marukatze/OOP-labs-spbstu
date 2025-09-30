@@ -36,6 +36,7 @@ public abstract class AbstractProgram {
     public void killProgram() {
         shouldStop = true;
         setState(ProgramState.FATAL_ERROR);
+        workerThread.interrupt();
         waitForWorker();
     }
 
@@ -45,14 +46,15 @@ public abstract class AbstractProgram {
                 workerThread.join();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
+            } finally {
+                workerThread = null;
             }
-            workerThread = null;
         }
     }
 
     private void workLoop() {
         try {
-            while (!shouldStop) doWork();
+            while (!shouldStop && !Thread.currentThread().isInterrupted()) doWork();
         } finally {
             cleanup();
         }
