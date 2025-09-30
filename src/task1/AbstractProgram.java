@@ -2,7 +2,8 @@ package task1;
 
 public abstract class AbstractProgram {
     private volatile ProgramState state = ProgramState.UNKNOWN;
-    private Thread workerThread = new Thread(this::doWork);
+    private Thread workerThread;
+    private volatile boolean shouldStop = false;
 
     public synchronized ProgramState getState() {
         return state;
@@ -17,41 +18,43 @@ public abstract class AbstractProgram {
     }
 
     public synchronized void startProgram() {
-        if (workerThread != null && workerThread.isAlive()) {
-            setState(ProgramState.RUNNING);
-            return;
-        }
+        if (workerThread != null && workerThread.isAlive()) return;
 
+        shouldStop = false;
         setState(ProgramState.RUNNING);
+
+        workerThread = new Thread(this::workLoop);
         workerThread.start();
     }
 
-    public synchronized void stopProgram() {
-        if (workerThread == null || !workerThread.isAlive()) {
-            setState(ProgramState.STOPPING);
-            return;
-        }
-
+    public void stopProgram() {
+        shouldStop = true;
         setState(ProgramState.STOPPING);
-        workerThread.interrupt();
-        try {
-            workerThread.join(1000);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-        workerThread = null;
+        waitForWorker();
     }
 
     public synchronized void killProgram() {
+        shouldStop = true;
         setState(ProgramState.FATAL_ERROR);
-        workerThread.interrupt();
-        try {
-            workerThread.join(1000);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+        waitForWorker();
+    }
+
+    private void waitForWorker() {
+        if (workerThread != null) {
+            try {
+                workerThread.join();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            workerThread = null;
         }
-        workerThread = null;
+    }
+
+    private void workLoop() {
+        while (!shouldStop) doWork();
+        cleanup();
     }
 
     public abstract void doWork();
+    public abstract void cleanup();
 }
