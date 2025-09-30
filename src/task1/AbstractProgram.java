@@ -33,7 +33,7 @@ public abstract class AbstractProgram {
         waitForWorker();
     }
 
-    public synchronized void killProgram() {
+    public void killProgram() {
         shouldStop = true;
         setState(ProgramState.FATAL_ERROR);
         waitForWorker();
