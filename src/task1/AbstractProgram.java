@@ -4,6 +4,8 @@ public abstract class AbstractProgram {
     private volatile ProgramState state = ProgramState.UNKNOWN;
     private Thread workerThread;
     private volatile boolean shouldStop = false;
+    private Thread daemonRandomThread;
+    
 
     public synchronized ProgramState getState() {
         return state;
